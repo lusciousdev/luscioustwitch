@@ -233,9 +233,9 @@ class TwitchAPI:
       response_json : dict = r.json()
       response_data : typing.List[dict] = response_json.get("data", [])
       if len(response_data) > 0:
-        return TwitchChannelInfo(response_data[0])
+        return TwitchCategoryInfo(response_data[0])
       else:
-        raise TwitchChannelInfo.DoesNotExist(f"Category ID \"{category_id}\" was not found.")
+        raise TwitchCategoryInfo.DoesNotExist(f"Category ID \"{category_id}\" was not found.")
     elif r.status_code == 401:
       if self.refresh_authorization():
         return self.get_category_by_id(category_id)
