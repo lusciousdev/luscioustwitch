@@ -50,10 +50,10 @@ class LusciousBaseObject:
       self.parse_attribute(key, object_data.get(key, None))
         
     if len(missing_keys) > 0:
-      raise LusciousBaseObject.InvalidFormat(f"{type(self).__name__} JSON data is missing keys: {", ".join(missing_keys)}")
+      raise LusciousBaseObject.InvalidFormat(f"{type(self).__name__} JSON data is missing keys: {', '.join(missing_keys)}")
     
     if len(invalid_keys) > 0:
-      raise LusciousBaseObject.InvalidFormat(f"{type(self).__name__} JSON data has invalid values for keys: {", ".join(invalid_keys)}")
+      raise LusciousBaseObject.InvalidFormat(f"{type(self).__name__} JSON data has invalid values for keys: {', '.join(invalid_keys)}")
 
 class TwitchClip(LusciousBaseObject):
   clip_id : str = None
