@@ -16,12 +16,23 @@ class TestGqlAPI(unittest.TestCase):
     self.assertEqual(clip.clipId, '2382936331')
     self.assertEqual(clip.playbackAccessToken.value["clip_slug"], clip_id)
     
+  def test_download_clip(self):
+    clip_id = "EnchantingSilkyYakDogFace-OdB69-PvUTV7MSQs"
+    
+    success = self.gql.download_clip(clip_id, "./tmp.mp4", True)
+    
+    self.assertTrue(success)
+    
+    if os.path.exists("./tmp.mp4"):
+      os.remove("./tmp.mp4")
+    
+    
   def test_get_video(self):
-    video_id = "2383314291"
+    video_id = "635766592"
     video = self.gql.get_video(video_id)
     
     self.assertEqual(video.videoId, video_id)
-    self.assertEqual(video.owner["displayName"], "itswill")
+    self.assertEqual(video.owner["displayName"].lower(), "twitch")
     
 if __name__ == '__main__':
   unittest.main()

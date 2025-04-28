@@ -95,14 +95,18 @@ class TwitchGQL_API:
     
     url = info.videoQualities[0].sourceURL
     signature = info.playbackAccessToken.signature
-    token = info.playbackAccessToken.value
+    token = info.playbackAccessToken.value_raw
     full_url = f"{url}?sig={signature}&token={token}"
     
     try:
       r = requests.get(full_url)
-      with open(filename, 'wb') as outfile:
-        outfile.write(r.content)
-        return True
+      if r.status_code >= 200 and r.status_code < 300:
+        with open(filename, 'wb') as outfile:
+          outfile.write(r.content)
+          return True
+      else:
+        print(f"{r.reason} ({r.status_code})")
+        return False
     except:
       return False
     

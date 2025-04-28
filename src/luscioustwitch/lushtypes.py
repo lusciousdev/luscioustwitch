@@ -115,6 +115,7 @@ class TwitchClip(LusciousBaseObject):
 class GQL_PlaybackAccessToken(LusciousBaseObject):
   signature : str = None
   value : dict = None
+  value_raw : str = None
   
   @property
   def attributes(self) -> typing.List[str]:
@@ -125,6 +126,7 @@ class GQL_PlaybackAccessToken(LusciousBaseObject):
     
   def parse_attribute(self, key : str, value : object):
     if key == "value":
+      setattr(self, 'value_raw', value)
       setattr(self, key, json.loads(value))
     else:
       setattr(self, key, value)
