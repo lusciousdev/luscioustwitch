@@ -1,6 +1,7 @@
 import os
 import re
 import typing
+import urllib.parse
 
 from .lushrequests import *
 from .lushtypes import *
@@ -93,22 +94,25 @@ class TwitchGQL_API:
     
     info = self.get_clip(clip_id)
     
-    url = info.videoQualities[0].sourceURL
-    signature = info.playbackAccessToken.signature
-    token = info.playbackAccessToken.value_raw
-    full_url = f"{url}?sig={signature}&token={token}"
-    
-    try:
-      r = requests.get(full_url)
-      if r.status_code >= 200 and r.status_code < 300:
-        with open(filename, 'wb') as outfile:
-          outfile.write(r.content)
-          return True
-      else:
-        print(f"{r.reason} ({r.status_code})")
-        return False
-    except:
-      return False
+    for videoQuality in info.videoQualities:
+      print(f"Attempting to download clip in \"{videoQuality.quality}\"")
+      url = videoQuality.sourceURL
+      signature = info.playbackAccessToken.signature
+      token = info.playbackAccessToken.value_raw
+      full_url = f"{url}?{urllib.parse.urlencode({ "sig": signature, "token": token })}"
+      
+      try:
+        r = requests.get(full_url)
+        if r.status_code >= 200 and r.status_code < 300:
+          with open(filename, 'wb') as outfile:
+            outfile.write(r.content)
+            return True
+        else:
+          print(f"Failed to download clip with quality \"{videoQuality.quality}\": {r.reason} ({r.status_code})")
+      except Exception as e:
+        print(f"Failed to download clip with quality \"{videoQuality.quality}\": {e}")
+      
+    return False
     
   def get_video_token(self, video_id):
     content = {
